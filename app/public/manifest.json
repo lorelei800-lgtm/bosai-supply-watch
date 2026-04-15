@@ -1,0 +1,17 @@
+{
+  "name": "防災備蓄ウォッチ",
+  "short_name": "備蓄ウォッチ",
+  "description": "避難所の開設状況と備蓄量をリアルタイムで確認",
+  "lang": "ja",
+  "start_url": "/bosai-supply-watch/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#b91c1c",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
