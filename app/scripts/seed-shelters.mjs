@@ -56,6 +56,15 @@ if (!BASE_URL || !PROJECT || !TOKEN) {
 const [WS, PROJ] = PROJECT.split('/')
 const ITEMS_URL  = `${BASE_URL}/api/${WS}/projects/${PROJ}/models/${SHELTER_MODEL}/items`
 
+console.log('🔧 設定確認:')
+console.log(`   BASE_URL:      ${BASE_URL}`)
+console.log(`   WORKSPACE:     ${WS}`)
+console.log(`   PROJECT:       ${PROJ}`)
+console.log(`   MODEL:         ${SHELTER_MODEL}`)
+console.log(`   REQUEST URL:   ${ITEMS_URL}`)
+console.log(`   TOKEN先頭10文字: ${TOKEN?.slice(0, 10)}...`)
+console.log('')
+
 // ─── CLI args ────────────────────────────────────────────────────────────────
 
 const args = process.argv.slice(2)

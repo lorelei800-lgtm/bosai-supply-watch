@@ -17,30 +17,37 @@ interface PublicMapViewProps {
   selectedId: string | null
 }
 
-/** Create a DOM element for a custom map pin */
+/** Create a DOM element for a custom map pin.
+ *
+ * The outer `el` is left transform-free so MapLibre can use it for positioning.
+ * Scale animations are applied to the inner `inner` div only.
+ */
 function createPinElement(shelter: Shelter, snap: SupplySnapshot | undefined): HTMLDivElement {
   const s = snap ?? emptySnapshot(shelter.id)
   const ratios = snapshotToRatios(s)
-  const level  = shelter.isOpen ? worstLevel(ratios) : 'full' // gray handled below
+  const level  = shelter.isOpen ? worstLevel(ratios) : 'full'
   const bg     = shelter.isOpen ? LEVEL_COLORS[level].bg : '#9ca3af'
 
+  // Outer wrapper: size only — MapLibre writes its own transform here
   const el = document.createElement('div')
-  el.style.cssText = `
+  el.style.cssText = `width: 36px; height: 36px; cursor: pointer;`
+  el.title = shelter.name
+
+  // Inner element: carries all visual styles + scale animation
+  const inner = document.createElement('div')
+  inner.style.cssText = `
     width: 36px; height: 36px;
     background: ${bg};
     border-radius: 8px;
     border: 2px solid white;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
     font-size: 16px;
-    transition: transform 0.15s;
-    position: relative;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transform-origin: center bottom;
   `
-  el.innerHTML = shelter.isOpen ? '🏠' : '🏚️'
-
-  // Tooltip on hover
-  el.title = shelter.name
+  inner.textContent = shelter.isOpen ? '🏠' : '🏚️'
+  el.appendChild(inner)
 
   return el
 }
@@ -114,9 +121,16 @@ export function PublicMapView({
         .setLngLat([shelter.lng, shelter.lat])
         .addTo(map)
 
+      const inner = el.firstElementChild as HTMLDivElement
       el.addEventListener('click', () => onSelectShelter(shelter.id))
-      el.addEventListener('mouseenter', () => { el.style.transform = 'scale(1.2)' })
-      el.addEventListener('mouseleave', () => { el.style.transform = 'scale(1)' })
+      el.addEventListener('mouseenter', () => {
+        inner.style.transform = 'scale(1.2)'
+        inner.style.boxShadow = '0 4px 12px rgba(0,0,0,0.4)'
+      })
+      el.addEventListener('mouseleave', () => {
+        inner.style.transform = 'scale(1)'
+        inner.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)'
+      })
 
       markersRef.current.set(shelter.id, marker)
     }
@@ -125,9 +139,11 @@ export function PublicMapView({
   // Highlight selected marker
   useEffect(() => {
     markersRef.current.forEach((marker, id) => {
-      const el = marker.getElement()
-      el.style.transform = id === selectedId ? 'scale(1.3)' : 'scale(1)'
-      el.style.zIndex    = id === selectedId ? '10' : '1'
+      const inner = marker.getElement().firstElementChild as HTMLDivElement | null
+      if (!inner) return
+      inner.style.transform  = id === selectedId ? 'scale(1.3)' : 'scale(1)'
+      inner.style.boxShadow  = id === selectedId ? '0 4px 16px rgba(0,0,0,0.5)' : '0 2px 6px rgba(0,0,0,0.3)'
+      marker.getElement().style.zIndex = id === selectedId ? '10' : '1'
     })
   }, [selectedId])
 
