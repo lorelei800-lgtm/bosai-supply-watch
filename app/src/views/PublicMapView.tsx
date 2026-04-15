@@ -26,7 +26,8 @@ function createPinElement(shelter: Shelter, snap: SupplySnapshot | undefined): H
   const s = snap ?? emptySnapshot(shelter.id)
   const ratios = snapshotToRatios(s)
   const level  = shelter.isOpen ? worstLevel(ratios) : 'full'
-  const bg     = shelter.isOpen ? LEVEL_COLORS[level].bg : '#9ca3af'
+  // Closed: neutral gray. Open: color-blind-safe level color
+  const bg     = shelter.isOpen ? LEVEL_COLORS[level].bg : '#6b7280'
 
   // Outer wrapper: size only — MapLibre writes its own transform here
   const el = document.createElement('div')
@@ -174,7 +175,7 @@ export function PublicMapView({
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-white/50 z-20">
           <div className="bg-white rounded-2xl shadow-lg px-6 py-4 text-center">
-            <div className="w-8 h-8 border-4 border-red-700 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+            <div className="w-8 h-8 border-4 border-t-transparent rounded-full animate-spin mx-auto mb-2" style={{ borderColor: '#0072B2', borderTopColor: 'transparent' }} />
             <p className="text-sm text-gray-600">データを読み込んでいます…</p>
           </div>
         </div>

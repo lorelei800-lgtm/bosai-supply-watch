@@ -30,6 +30,10 @@ export function ShelterCard({ shelter, snapshot, onClose, onAdminClick }: Shelte
 
   return (
     <div className="bg-white rounded-t-2xl lg:rounded-2xl shadow-2xl flex flex-col max-h-[80vh] overflow-y-auto">
+      {/* Mobile drag handle */}
+      <div className="flex justify-center pt-2.5 pb-0 lg:hidden">
+        <div className="w-10 h-1 bg-gray-300 rounded-full" />
+      </div>
       {/* Header */}
       <div className="flex items-start justify-between p-4 border-b border-gray-100">
         <div className="flex-1 min-w-0">
@@ -123,9 +127,12 @@ export function ShelterCard({ shelter, snapshot, onClose, onAdminClick }: Shelte
         <div className="px-4 pb-4 pt-1">
           <button
             onClick={onAdminClick}
-            className="w-full bg-red-700 hover:bg-red-800 text-white font-bold py-3 rounded-xl text-sm transition-colors min-h-[44px]"
+            className="w-full text-white font-bold py-3 rounded-xl text-sm transition-colors min-h-[44px]"
+            style={{ backgroundColor: '#0072B2' }}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#005a8e')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#0072B2')}
           >
-            備蓄を更新する
+            ✏️ 備蓄を更新する
           </button>
         </div>
       </AdminGuard>
